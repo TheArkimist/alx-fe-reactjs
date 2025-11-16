@@ -10,7 +10,6 @@ export default function RecipeDetails() {
     state.recipes.find(r => r.id === Number(recipeId))
   );
 
-  const deleteRecipe = useRecipeStore(state => state.deleteRecipe);
 
   if (!recipe) return <p>Recipe not found.</p>;
 
