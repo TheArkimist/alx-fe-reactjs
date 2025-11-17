@@ -1,33 +1,29 @@
 import React, { useState } from 'react';
-import { fetchUserData } from '../services/githubService';
+import { searchUsers } from '../services/githubService';
 
 const Search = () => {
     const [username, setUsername] = useState('');
     const [location, setLocation] = useState('');
     const [minRepos, setMinRepos] = useState('');
-    const [userData, setUserData] = useState(null);
+    const [users, setUsers] = useState([]); // Updated to handle multiple users
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        setUserData(null);
+        setUsers([]);
         setLoading(true);
 
         try {
-            const data = await fetchUserData(username);
-            // Filter by location and minimum repositories if provided
-            if (
-                (location && data.location?.toLowerCase() !== location.toLowerCase()) ||
-                (minRepos && data.public_repos < parseInt(minRepos))
-            ) {
-                setError('No user matches the advanced search criteria.');
+            const results = await searchUsers({ username, location, minRepos });
+            if (results.length === 0) {
+                setError('No users match the search criteria.');
             } else {
-                setUserData(data);
+                setUsers(results); // Set the list of matching users
             }
         } catch (err) {
-            setError("Looks like we can't find the user.");
+            setError("An error occurred while searching for users.");
         } finally {
             setLoading(false);
         }
@@ -38,7 +34,7 @@ const Search = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                     <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                        GitHub Username
+                        GitHub Username (optional)
                     </label>
                     <input
                         id="username"
@@ -47,7 +43,6 @@ const Search = () => {
                         onChange={(e) => setUsername(e.target.value)}
                         placeholder="Enter GitHub username"
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        required
                     />
                 </div>
 
@@ -91,18 +86,31 @@ const Search = () => {
 
             {error && <p className="mt-4 text-center text-red-500">{error}</p>}
 
-            {userData && (
-                <div className="mt-6 p-4 bg-gray-100 rounded-md">
-                    <h3 className="text-lg font-semibold">{userData.login}</h3>
-                    <img
-                        src={userData.avatar_url}
-                        alt={`${userData.login} avatar`}
-                        className="w-24 h-24 rounded-full mx-auto my-4"
-                    />
-                    <p className="text-sm">Location: {userData.location || 'N/A'}</p>
-                    <p className="text-sm">Followers: {userData.followers}</p>
-                    <p className="text-sm">Following: {userData.following}</p>
-                    <p className="text-sm">Public Repos: {userData.public_repos}</p>
+            {users.length > 0 && (
+                <div className="mt-6 space-y-4">
+                    {users.map((user) => (
+                        <div
+                            key={user.id}
+                            className="p-4 bg-gray-100 rounded-md shadow-sm flex items-center space-x-4"
+                        >
+                            <img
+                                src={user.avatar_url}
+                                alt={`${user.login} avatar`}
+                                className="w-16 h-16 rounded-full"
+                            />
+                            <div>
+                                <h3 className="text-lg font-semibold">{user.login}</h3>
+                                <a
+                                    href={user.html_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-indigo-600 hover:underline"
+                                >
+                                    View Profile
+                                </a>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             )}
         </div>
