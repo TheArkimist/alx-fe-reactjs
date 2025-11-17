@@ -42,7 +42,6 @@ const Search = () => {
             <p>Followers: {userData.followers}</p>
             <p>Following: {userData.following}</p>
             <p>Public Repos: {userData.public_repos}</p>
-            <a href={userData.html.url}>View Profile</a>
         </div>)}
 
 

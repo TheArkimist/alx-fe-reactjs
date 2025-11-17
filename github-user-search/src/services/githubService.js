@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useEffect } from "react";
 
-const GITHUB_API_KEY = import.meta.env.VITE_APP_GITHUB_API_KEY;
+const token = import.meta.env.VITE_APP_GITHUB_API_KEY;
 
 const api = axios.create({
     baseURL: 'https://api.github.com',
     headers: token ?{
-        Authorization: `Bearer ${GITHUB_API_KEY}`
+        Authorization: `Bearer ${token}`
     }: {},
 });
 
