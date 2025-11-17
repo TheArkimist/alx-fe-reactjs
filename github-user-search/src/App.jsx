@@ -1,3 +1,5 @@
+import { GITHUB_API_KEY } from "./services/githubService"
+
 function App() {
   
 
