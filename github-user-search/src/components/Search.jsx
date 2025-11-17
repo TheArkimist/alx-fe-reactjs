@@ -16,7 +16,8 @@ const Search = () => {
         setLoading(true);
 
         try {
-            const results = await searchUsers({ username, location, minRepos });
+            const query = `q=${username ? `${username} in:login` : ''} ${location ? `location:${location}` : ''} ${minRepos ? `repos:>=${minRepos}` : ''}`.trim();
+            const results = await searchUsers(query);
             if (results.length === 0) {
                 setError('No users match the search criteria.');
             } else {
