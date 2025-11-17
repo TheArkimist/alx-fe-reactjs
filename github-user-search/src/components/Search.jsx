@@ -6,17 +6,21 @@ const Search = () => {
     const [username, setUsername] = useState('');
     const [userData, setUserData] = useState(null);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setUserData(null);
+        setLoading(true);
 
         try {
             const data = await fetchUserData(username);
             setUserData(data);
         } catch (err) {
             setError("Looks like we can't find the user.");
+        } finally {
+            setLoading(false);
         }
         // Logic to fetch user data from GitHub API
     };
@@ -33,6 +37,8 @@ const Search = () => {
 
             <button type="submit">Search</button>
         </form>
+
+        {loading && <p>Loading...</p>}
 
         {error && <p style={{color: 'red'}}>{error}</p>}
 
