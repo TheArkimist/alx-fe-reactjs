@@ -16,7 +16,7 @@ const Search = () => {
             const data = await fetchUserData(username);
             setUserData(data);
         } catch (err) {
-            setError('User not found');
+            setError("Looks like we can't find the user.");
         }
         // Logic to fetch user data from GitHub API
     };
